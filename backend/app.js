@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import connectMongoDB from "./config/db.js";
 import {
   getClients,
@@ -13,6 +14,7 @@ import { clientExist } from "./middlewares/error.js";
 
 const app = express();
 dotenv.config();
+app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 

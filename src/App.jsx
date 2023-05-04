@@ -1,12 +1,12 @@
 import { lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-const TodoListPage = lazy(() => import("./pages/TodoListPage"));
+const ClientListPage = lazy(() => import("./pages/ClientListPage"));
 
 function App() {
   return (
     <BrowserRouter>
-      <TodoListPage />
+      <ClientListPage />
     </BrowserRouter>
   );
 }

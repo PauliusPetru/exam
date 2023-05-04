@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
-import { languageState } from "../../../shared/state/atoms";
-import TEXTS from "../../../shared/texts/TEXTS";
 import Input from "../../atoms/Input";
 import Button from "../../atoms/Button";
 import {
@@ -12,8 +9,6 @@ import {
 } from "./styles";
 
 const Form = ({ inputs, handleSubmit, buttonTitle, footer }) => {
-  const language = useRecoilValue(languageState);
-
   return (
     <StyledForm
       onSubmit={(e) => {
@@ -37,7 +32,7 @@ const Form = ({ inputs, handleSubmit, buttonTitle, footer }) => {
         </StyledFormControl>
       ))}
       <StyledFormControl style={{ textAlign: "center" }}>
-        <Button action={() => {}} text={buttonTitle} type="submit" />
+        <Button action={() => {}} text={buttonTitle} type='submit' />
         {footer && footer}
       </StyledFormControl>
     </StyledForm>
