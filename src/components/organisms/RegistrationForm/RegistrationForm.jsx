@@ -1,22 +1,50 @@
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
 import Form from "../../molecules/Form";
 import ICONS from "../../../shared/icons";
-import client, { API } from "../../../shared/api/api";
-import { useTheme } from "styled-components";
 
-const RegistrationForm = ({ closeModal, showRegistration }) => {
+const RegistrationForm = ({ closeModal, onCreate }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [name, setnName] = useState("");
   const [nameError, setnameError] = useState("");
+  const [surname, setsurname] = useState("");
+  const [surnameError, setsurnameError] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setpasswordError] = useState("");
+  const [startYear, setstartYear] = useState(2023);
+  const [startYearError, setstartYearError] = useState(null);
+  const [startMonth, setstartMonth] = useState(1);
+  const [startMonthError, setstartMonthError] = useState(null);
+  const [endYear, setendYear] = useState(2024);
+  const [endYearError, setendYearError] = useState(null);
+  const [endMonth, setendMonth] = useState(1);
+  const [endMonthError, setendMonthError] = useState(null);
 
   const inputs = () => {
     let fields = [
       {
+        id: "name",
+        type: "text",
+        label: "Name",
+        placeholder: "Name...",
+        icon: ICONS.user,
+        value: name,
+        setValue: (value) => setnName(value),
+        required: true,
+        errorMessage: nameError,
+      },
+      {
+        id: "surname",
+        type: "text",
+        label: "Surname",
+        placeholder: "Surname...",
+        icon: ICONS.user,
+        value: surname,
+        setValue: (value) => setsurname(value),
+        required: true,
+        errorMessage: nameError,
+      },
+      {
+        id: "email",
         type: "email",
         label: "Email",
         placeholder: "Enter email...",
@@ -27,115 +55,72 @@ const RegistrationForm = ({ closeModal, showRegistration }) => {
         errorMessage: emailError,
       },
       {
-        type: "password",
-        label: "Password",
-        placeholder: "Password...",
+        id: "startYear",
+        type: "number",
+        label: "Start Year",
+        placeholder: "2023...",
         icon: ICONS.lock,
-        value: password,
-        setValue: (value) => setPassword(value),
+        value: startYear,
+        setValue: (value) => setstartYear(value),
         required: true,
-        errorMessage: passwordError,
+        errorMessage: startYearError,
+      },
+      {
+        id: "startMonth",
+        type: "number",
+        label: "Start Month",
+        placeholder: "1...",
+        icon: ICONS.lock,
+        value: startMonth,
+        setValue: (value) => setstartMonth(value),
+        required: true,
+        errorMessage: startMonthError,
+      },
+      {
+        id: "endYear",
+        type: "number",
+        label: "End Year",
+        placeholder: "2030...",
+        icon: ICONS.lock,
+        value: endYear,
+        setValue: (value) => setendYear(value),
+        required: true,
+        errorMessage: endYearError,
+      },
+      {
+        id: "endMonth",
+        type: "number",
+        label: "End Month",
+        placeholder: "1...",
+        icon: ICONS.lock,
+        value: endMonth,
+        setValue: (value) => setendMonth(value),
+        required: true,
+        errorMessage: endMonthError,
       },
     ];
 
-    fields.unshift({
-      type: "text",
-      label: "Name",
-      placeholder: "Name...",
-      icon: ICONS.user,
-      value: name,
-      setValue: (value) => setnName(value),
-      required: true,
-      errorMessage: nameError,
-    });
     return fields;
   };
 
-  // const handleSubmit = async () => {
-  //   const notValid = inputs().filter((input) =>
-  //     !input.required ? false : input.value ? false : true
-  //   );
+  const handleSubmit = () => {
+    setSuccessMessage("Registration suscsefull");
 
-  //   inputs().forEach((element) => {
-  //     if (element.label == "Email") {
-  //       setEmailError(
-  //         notValid.find((x) => element.label == x.label)
-  //           ? "Required"
-  //           : ""
-  //       );
-  //     } else if (element.label == "Password") {
-  //       setpasswordError(
-  //         notValid.find((x) => element.label == x.label)
-  //         ? "Required"
-  //         : ""
-  //       );
-  //     } else if (element.label == "Name") {
-  //       setnameError(
-  //         notValid.find((x) => element.label == x.label)
-  //         ? "Required"
-  //         : ""
-  //       );
-  //     }
-  //   });
+    const clientModel = {
+      name: name + " " + surname,
+      email: email,
+      startYear: startYear,
+      startMonth: startMonth,
+      endYear: endYear,
+      endMonth: endMonth,
+    };
 
-  //   if (notValid.length) {
-  //     return;
-  //   }
+    onCreate(clientModel);
 
-  // let users = await client.get(API.baseUrl.users);
-
-  // const findUser = users.find(
-  //   (user) => user.email.toLowerCase() === email.toLowerCase()
-  // );
-
-  //   if (isRegistration) {
-  //     if (findUser) {
-  //       setEmailError("userAlreadyExist");
-  //       return;
-  //     } else {
-  //       const userData = {
-  //         id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-  //         name: name,
-  //         email: email,
-  //         password: password,
-  //         todos: [],
-  //       };
-  //       await client.post(API.baseUrl.users, userData);
-
-  //       setSuccessMessage(
-  //         isRegistration
-  //           ? TEXTS.page.registration.successRegistration[language]
-  //           : TEXTS.page.registration.successLogin[language]
-  //       );
-
-  //       setTimeout(() => {
-  //         navigate("todos");
-  //       }, 1500);
-  //     }
-  //   } else {
-  //     if (!findUser) {
-  //       setEmailError(TEXTS.page.registration.userDoesntExist[language]);
-  //       return;
-  //     } else {
-  //       if (password === findUser.password) {
-  //         localStorage.setItem(CONSTANTS.userData, JSON.stringify(findUser));
-
-  //         setSuccessMessage(
-  //           isRegistration
-  //             ? TEXTS.page.registration.successRegistration[language]
-  //             : TEXTS.page.registration.successLogin[language]
-  //         );
-
-  //         setTimeout(() => {
-  //           navigate("todos");
-  //         }, 1500);
-  //       } else {
-  //         setPassword("");
-  //         setpasswordError(TEXTS.page.registration.wrongPassword[language]);
-  //       }
-  //     }
-  //   }
-  // };
+    setTimeout(() => {
+      closeModal();
+    }, 1500);
+  };
 
   if (successMessage) {
     return (
@@ -148,7 +133,7 @@ const RegistrationForm = ({ closeModal, showRegistration }) => {
   return (
     <Form
       inputs={inputs()}
-      handleSubmit={() => {}}
+      handleSubmit={handleSubmit}
       buttonTitle='Register'
       footer={""}
     />

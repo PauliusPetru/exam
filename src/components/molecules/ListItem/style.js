@@ -4,13 +4,14 @@ export const StyledListItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 400px;
+  width: 500px;
   height: 40px;
   margin-top: 10px;
   background-color: #f5f5f5;
   border-radius: 5px;
   font-size: 18px;
   font-weight: 500;
+  padding: 0 10px;
 `;
 
 export const ListItemButton = styled.button`

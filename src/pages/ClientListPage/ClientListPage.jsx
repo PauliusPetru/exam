@@ -24,24 +24,8 @@ const ClientListPage = () => {
     queryKey: ["clients"],
     queryFn: () => client.get(API.baseUrl.clients),
     select: (todos) => {
-      const to = [
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-        ...todos,
-      ];
-      totalPages = Math.ceil(to.length / 10);
-      return to;
+      totalPages = Math.ceil(todos.length / 10);
+      return todos;
     },
   });
 
@@ -52,16 +36,13 @@ const ClientListPage = () => {
     setCurrentPage(newPage);
   };
 
-  const createTask = async (taskText) => {
-    const task = {
-      id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      text: taskText,
-      status: "active",
-      created_at: Date.now(),
-      user_id: user.id,
-    };
-    await client.post(API.baseUrl.todos, task);
-    refetch();
+  const createTask = async (customer) => {
+    try {
+      await client.post(API.baseUrl.clients, customer);
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const renderClients = () => {
@@ -96,33 +77,35 @@ const ClientListPage = () => {
       />
       <ListContainer>
         {renderClients()}
-        <ButtonContainer>
-          <PaginationButton
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
-          >
-            Prev
-          </PaginationButton>
-          {Array.from({ length: totalPages }, (_, index) => (
+        {totalPages > 1 && (
+          <ButtonContainer>
             <PaginationButton
-              key={index}
-              active={currentPage === index + 1}
-              onClick={() => handlePageChange(index + 1)}
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
             >
-              {index + 1}
+              Prev
             </PaginationButton>
-          ))}
-          <PaginationButton
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-          >
-            Next
-          </PaginationButton>
-        </ButtonContainer>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <PaginationButton
+                key={index}
+                active={currentPage === index + 1}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {index + 1}
+              </PaginationButton>
+            ))}
+            <PaginationButton
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </PaginationButton>
+          </ButtonContainer>
+        )}
       </ListContainer>
       {showCreate && (
         <Modal onClose={closeCreate}>
-          <RegistrationForm closeModal={closeCreate} showRegistration={false} />
+          <RegistrationForm closeModal={closeCreate} onCreate={createTask} />
         </Modal>
       )}
     </Container>

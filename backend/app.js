@@ -29,7 +29,7 @@ app.get("/api/clients", getClients);
 
 app.get("/api/posts/:id", clientExist, getClient);
 
-app.post("/api/client", createClient);
+app.post("/api/clients", createClient);
 
 app.put("/api/posts/:id", clientExist, updateClient);
 
