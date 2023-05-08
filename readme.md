@@ -4,11 +4,7 @@ to run project run commands in project root directory:
 
 install packages
 
-- npm ci
-- cd backend
-- npm ci
-- cd ..
-- run project
+- npm run install_packages
 
 run project
 
