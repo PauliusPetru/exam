@@ -1,23 +1,42 @@
 import { useState } from "react";
 import Form from "../../molecules/Form";
 import ICONS from "../../../shared/icons";
+import Button from "../../atoms/Button";
 
-const RegistrationForm = ({ closeModal, onCreate }) => {
+const RegistrationForm = ({
+  closeModal,
+  onCreate,
+  onDelete,
+  onUpdate,
+  reservation,
+}) => {
   const [successMessage, setSuccessMessage] = useState("");
-  const [name, setnName] = useState("");
+  const [name, setnName] = useState(
+    reservation ? reservation.name.toString().split(" ")[0] : ""
+  );
   const [nameError, setnameError] = useState("");
-  const [surname, setsurname] = useState("");
+  const [surname, setsurname] = useState(
+    reservation ? reservation.name.toString().split(" ")[1] : ""
+  );
   const [surnameError, setsurnameError] = useState("");
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [startYear, setstartYear] = useState(2023);
-  const [startYearError, setstartYearError] = useState(null);
-  const [startMonth, setstartMonth] = useState(1);
-  const [startMonthError, setstartMonthError] = useState(null);
-  const [endYear, setendYear] = useState(2024);
-  const [endYearError, setendYearError] = useState(null);
-  const [endMonth, setendMonth] = useState(1);
-  const [endMonthError, setendMonthError] = useState(null);
+  const [email, setEmail] = useState(reservation ? reservation.email : "");
+  const [emailError, setEmailError] = useState();
+  const [startYear, setstartYear] = useState(
+    reservation ? reservation.startYear : 2023
+  );
+  const [startYearError, setstartYearError] = useState();
+  const [startMonth, setstartMonth] = useState(
+    reservation ? reservation.startMonth : 1
+  );
+  const [startMonthError, setstartMonthError] = useState("");
+  const [endYear, setendYear] = useState(
+    reservation ? reservation.endYear : 2024
+  );
+  const [endYearError, setendYearError] = useState("");
+  const [endMonth, setendMonth] = useState(
+    reservation ? reservation.endMonth : 1
+  );
+  const [endMonthError, setendMonthError] = useState("");
 
   const inputs = () => {
     let fields = [
@@ -41,7 +60,7 @@ const RegistrationForm = ({ closeModal, onCreate }) => {
         value: surname,
         setValue: (value) => setsurname(value),
         required: true,
-        errorMessage: nameError,
+        errorMessage: surnameError,
       },
       {
         id: "email",
@@ -104,7 +123,52 @@ const RegistrationForm = ({ closeModal, onCreate }) => {
   };
 
   const handleSubmit = () => {
-    setSuccessMessage("Registration suscsefull");
+    var ableToSubmit = true;
+
+    if (!name) {
+      setnameError("Required");
+      ableToSubmit = false;
+    }
+    if (!surname) {
+      setsurnameError("Required");
+      ableToSubmit = false;
+    }
+    if (!email) {
+      setEmailError("Required");
+      ableToSubmit = false;
+    }
+    if (2022 > startYear) {
+      setstartYearError("Value has to be from 2023");
+      ableToSubmit = false;
+    }
+    if (0 > startMonth && startMonth > 13) {
+      setstartMonthError("Value has to be between 1-12");
+      ableToSubmit = false;
+    }
+    if (!endYear) {
+      setendYearError("Value has to be from 2023");
+      ableToSubmit = false;
+    }
+    if (0 > endMonth || endMonth > 13) {
+      setendMonthError("Value has to be between 1-12");
+      ableToSubmit = false;
+    }
+
+    if (!ableToSubmit) {
+      return;
+    }
+
+    if (startYear >= endYear && startMonth >= endMonth) {
+      setendYearError("End date has to be greater then start date");
+      setendMonthError("End date has to be greater then start date");
+      ableToSubmit = false;
+    }
+
+    if (!ableToSubmit) {
+      return;
+    }
+
+    setSuccessMessage("Suscsefull");
 
     const clientModel = {
       name: name + " " + surname,
@@ -115,7 +179,12 @@ const RegistrationForm = ({ closeModal, onCreate }) => {
       endMonth: endMonth,
     };
 
-    onCreate(clientModel);
+    if (reservation) {
+      clientModel["_id"] = reservation._id;
+      onUpdate(clientModel);
+    } else {
+      onCreate(clientModel);
+    }
 
     setTimeout(() => {
       closeModal();
@@ -134,8 +203,20 @@ const RegistrationForm = ({ closeModal, onCreate }) => {
     <Form
       inputs={inputs()}
       handleSubmit={handleSubmit}
-      buttonTitle='Register'
-      footer={""}
+      buttonTitle={reservation ? "Save" : "Register"}
+      footer={
+        reservation && (
+          <Button
+            margin={"20px 0"}
+            width={"100px"}
+            action={() => {
+              onDelete(reservation);
+            }}
+            text={"Delete"}
+            color={"danger"}
+          />
+        )
+      }
     />
   );
 };

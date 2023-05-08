@@ -27,13 +27,13 @@ app.use(express.json());
 
 app.get("/api/clients", getClients);
 
-app.get("/api/posts/:id", clientExist, getClient);
+app.get("/api/clients/:id", clientExist, getClient);
 
 app.post("/api/clients", createClient);
 
-app.put("/api/posts/:id", clientExist, updateClient);
+app.put("/api/clients/:id", clientExist, updateClient);
 
-app.delete("/api/posts/:id", clientExist, deleteClient);
+app.delete("/api/clients/:id", clientExist, deleteClient);
 
 // Starting server
 app.listen(PORT, () => console.log("Server is running on PORT:" + PORT));

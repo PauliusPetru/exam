@@ -48,15 +48,9 @@ export const SyledCloseButtonContainer = styled.div`
 `;
 
 export const StyledModal = styled.div`
-  max-width: 800px;
+  width: min(80%, 600px);
   padding: 1em;
   border-radius: 0.375em;
   border: 5px solid ${(props) => props.theme.palette.overlay.dark};
   background-color: ${(props) => props.theme.palette.weUse.white};
-  @media (min-width: 1250px) {
-    width: 600px;
-  }
-  @media (min-width: 1800px) {
-    width: 600px;
-  }
 `;

@@ -16,8 +16,12 @@ import ListItem from "../../components/molecules/ListItem/ListItem";
 const ClientListPage = () => {
   const [showCreate, setshowCreate] = useState(false);
   const openCreate = () => setshowCreate(true);
-  const closeCreate = () => setshowCreate(false);
+  const closeCreate = () => {
+    setreservationInEdit(null);
+    setshowCreate(false);
+  };
   const [currentPage, setCurrentPage] = useState(1);
+  const [reservationInEdit, setreservationInEdit] = useState(null);
   let totalPages = 0;
 
   const { data, isLoading, refetch } = useQuery({
@@ -36,9 +40,28 @@ const ClientListPage = () => {
     setCurrentPage(newPage);
   };
 
-  const createTask = async (customer) => {
+  const updateReservation = async (customer) => {
+    try {
+      console.log(customer);
+      await client.put(API.baseUrl.clients + customer._id, customer);
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const createReservation = async (customer) => {
     try {
       await client.post(API.baseUrl.clients, customer);
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteReservation = async (customer) => {
+    try {
+      await client.delete(API.baseUrl.clients + customer._id);
       refetch();
     } catch (error) {
       console.log(error);
@@ -54,15 +77,18 @@ const ClientListPage = () => {
     }
     return (
       <List>
-        {data.slice((currentPage - 1) * 10, currentPage * 10).map((client) => (
-          <ListItem
-            key={`${client._id} ${Math.random()} `}
-            client={client}
-            onEdit={(client) => {
-              console.log(client);
-            }}
-          />
-        ))}
+        {data
+          .slice((currentPage - 1) * 10, currentPage * 10)
+          .map((reservation) => (
+            <ListItem
+              key={`${reservation._id} ${Math.random()} `}
+              client={reservation}
+              onEdit={(reservation) => {
+                setreservationInEdit(reservation);
+                setshowCreate(true);
+              }}
+            />
+          ))}
       </List>
     );
   };
@@ -105,7 +131,13 @@ const ClientListPage = () => {
       </ListContainer>
       {showCreate && (
         <Modal onClose={closeCreate}>
-          <RegistrationForm closeModal={closeCreate} onCreate={createTask} />
+          <RegistrationForm
+            closeModal={closeCreate}
+            onCreate={createReservation}
+            onUpdate={updateReservation}
+            onDelete={deleteReservation}
+            reservation={reservationInEdit}
+          />
         </Modal>
       )}
     </Container>

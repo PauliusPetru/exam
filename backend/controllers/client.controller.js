@@ -42,10 +42,11 @@ export const createClient = async (req, res) => {
 
 export const updateClient = async (req, res) => {
   try {
-    const clientId = req.params.id;
+    console.log(req.params);
+    const clientId = req.params._id;
     const updatedClientData = req.body;
 
-    await Client.findByIdAndUpdate(clientId, updatedClientData);
+    await Client.findByIdAndUpdate(updatedClientData._id, updatedClientData);
     const updatedClient = await Post.findById(clientId);
 
     res.json(updatedClient);

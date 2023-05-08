@@ -4,7 +4,7 @@ export const clientExist = async (req, res, next) => {
   try {
     const clientId = req.params.id;
 
-    const clientExists = await Client.findById(postId);
+    const clientExists = await Client.findById(clientId);
 
     if (!clientExists) {
       res.status(404).json({ message: "Client not found" });

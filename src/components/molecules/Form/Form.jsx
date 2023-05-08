@@ -33,6 +33,7 @@ const Form = ({ inputs, handleSubmit, buttonTitle, footer }) => {
       ))}
       <StyledFormControl style={{ textAlign: "center" }}>
         <Button action={() => {}} text={buttonTitle} type='submit' />
+        <br />
         {footer && footer}
       </StyledFormControl>
     </StyledForm>
